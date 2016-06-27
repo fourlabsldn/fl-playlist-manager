@@ -74,6 +74,7 @@ module.exports = class Round {
         trackList.push(userTrack);
       }
     });
+
     return trackList;
   }
 

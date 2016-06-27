@@ -7,8 +7,9 @@ module.exports = class Track {
     assert(typeof trackInfo.album === 'object', 'Invalid trackInfo object. Invalid "album" property type.'); // eslint-disable-line max-len
     assert(Array.isArray(trackInfo.artists), 'Invalid trackInfo object. Invalid "artists" property type.'); // eslint-disable-line max-len
     assert(typeof trackInfo.id !== 'undefined', 'Invalid trackInfo object. No "id" property set.'); // eslint-disable-line max-len
-    this.info = trackInfo;
 
+    // Make sure we are creating an entirely new object.
+    this.info = JSON.parse(JSON.stringify(trackInfo));
     this.info.user = undefined;
     this.user = undefined;
     Object.preventExtensions(this);
@@ -22,8 +23,12 @@ module.exports = class Track {
    */
   isSame(track) {
     if (!(track instanceof Track)) { return false; }
+
     const trackInfo = track.getInfo();
-    return trackInfo.id === this.info.id;
+    const trackUserId = trackInfo.user ? track.user.id : undefined;
+    const thisUserId = this.user ? this.user.id : undefined;
+
+    return trackInfo.id === this.info.id && thisUserId === trackUserId;
   }
 
   /**
