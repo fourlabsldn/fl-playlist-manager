@@ -44,4 +44,13 @@ try {
 } catch (e) {
   console.log(e.message);
 }
+
+logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
+logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
+logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
+logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
 logTracks(handler.getTrackList());

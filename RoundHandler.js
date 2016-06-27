@@ -96,10 +96,9 @@ module.exports = class RoundHandler {
    */
   generateNextTrackListRound() {
     const firstActiveRound = this.rounds.find(r => r.isActive());
-    // This will set the round as inactive and freeze its tracks.
+    // extractTrackList will set the round as inactive and freeze its tracks.
     // It will also make those tracks non-modifiable.
-    const trackList = firstActiveRound.extractTrackList();
-    return trackList;
+    return firstActiveRound ? firstActiveRound.extractTrackList() : [];
   }
 
   /**
