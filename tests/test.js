@@ -1,8 +1,8 @@
 /* eslint-env node */
 
-const RoundHandler = require('./RoundHandler');
-const trackData = require('./demoData/trackData');
-const userData = require('./demoData/userData');
+const RoundHandler = require('../RoundHandler');
+const trackData = require('./trackData');
+const userData = require('./userData');
 const handler = new RoundHandler();
 
 handler.addTrack(trackData[0], userData[0]);
