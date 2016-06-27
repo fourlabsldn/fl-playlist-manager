@@ -101,4 +101,16 @@ module.exports = class RoundHandler {
     const trackList = firstActiveRound.extractTrackList();
     return trackList;
   }
+
+  /**
+   * @public
+   * @method setUserTrackOrder
+   * @throws if trackOrder doesn't have the exact same tracks as user.tracks.
+   * @param  {Object} userInfo
+   * @param  {Array<Object>} trackOrder
+   */
+  setUserTrackOrder(userInfo, trackOrder) {
+    const user = this.getUser(userInfo);
+    user.setTrackOrder(trackOrder);
+  }
 };

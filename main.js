@@ -25,29 +25,36 @@ handler.addTrack(trackData[3], userData[2]);
 handler.addTrack(trackData[5], userData[3]);
 handler.addTrack(trackData[6], userData[3]);
 handler.addTrack(trackData[7], userData[3]);
-handler.addTrack(trackData[0], userData[3]);
+handler.addTrack(trackData[8], userData[3]);
 
-const unmapped = handler.getTrackList();
-const trackList = unmapped.map(t => {
+let trackList = handler.getTrackList().map(t => {
   if (!t.getInfo) { return t; }
   const tInfo = t.getInfo();
   return {
     // id: tInfo.id,
-    user_id: tInfo.user.id,
     user_name: tInfo.user.name,
-    // track_name: tInfo.name,
+    track_name: tInfo.name,
   };
 });
 
 console.log(trackList);
-//
-// handler.setUserTracks(userId, tracks);
-//
-//
-//
-//
-//
-//
-// //////////////////////////////////////////
-// // When it's 20 seconds for the playlist to finish, add new round to playlist.
-// userSongs.createRound();
+
+handler.setUserTrackOrder(userData[3], [
+  trackData[8],
+  trackData[5],
+  trackData[6],
+  trackData[7],
+]);
+
+console.log(' ');
+
+trackList = handler.getTrackList().map(t => {
+  if (!t.getInfo) { return t; }
+  const tInfo = t.getInfo();
+  return {
+    // id: tInfo.id,
+    user_name: tInfo.user.name,
+    track_name: tInfo.name,
+  };
+});
+console.log(trackList);
