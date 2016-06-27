@@ -3,7 +3,7 @@ const assert = require('assert');
 const User = require('./User');
 
 module.exports = class Track {
-  constructor(trackInfo, user) {
+  constructor(trackInfo) {
     assert(typeof trackInfo.album === 'object', 'Invalid trackInfo object. Invalid "album" property type.'); // eslint-disable-line max-len
     assert(Array.isArray(trackInfo.artists), 'Invalid trackInfo object. Invalid "artists" property type.'); // eslint-disable-line max-len
     assert(typeof trackInfo.id !== 'undefined', 'Invalid trackInfo object. No "id" property set.'); // eslint-disable-line max-len
@@ -11,7 +11,6 @@ module.exports = class Track {
 
     this.info.user = undefined;
     this.user = undefined;
-    if (user !== undefined) { this.setUser(user); }
     Object.preventExtensions(this);
   }
 
@@ -36,7 +35,7 @@ module.exports = class Track {
     assert(user instanceof User, 'Invalid user being set for track. Not instance of User.');
     assert(this.user === undefined,
       `User already set for track "${this.info.name}".
-      Current user "${this.user.getInfo().name}". Trying to set "${user.getInfo().name}".`);
+      Current user "${this.user}". Trying to set "${user}".`);
     this.info.user = user.getInfo();
     this.user = user;
   }

@@ -22,8 +22,8 @@ module.exports = class RoundHandler {
    * @return {Boolean} success/failure
    */
   addTrack(trackInfo, userInfo) {
-    const track = new Track(trackInfo, userInfo);
-    const user = this.getUser(userInfo, user);
+    const track = new Track(trackInfo);
+    const user = this.getUser(userInfo);
     const trackAdded = user.addTrack(track);
     if (!trackAdded) { return false; }
 
@@ -79,7 +79,7 @@ module.exports = class RoundHandler {
       // We will be sending roundOffset -1 while we have inactive rounds.
       // As soon as we hit active rounds we will start counding the offset.
       roundOffset += round.isActive() ? 1 : 0;
-      const roundTrackList = round.getTracklist(roundOffset);
+      const roundTrackList = round.getTrackList(roundOffset);
       fullTrackList = fullTrackList.concat(roundTrackList);
 
       assert(round.isActive() && roundOffset >= 0 || roundOffset === -1,

@@ -83,13 +83,14 @@ module.exports = class User {
    * @return {Boolean}
    */
   isSame(user) {
+    if (!(user instanceof User)) { return false; }
     const userInfo = user.getInfo();
-    if (userInfo.id !== this.info.id) {
+    if (userInfo.id !== this.id) {
       return false;
     }
-    assert(userInfo.name === this.info.name,
+    assert(userInfo.name === this.name,
       `Bad data. User of id "${userInfo.id}" found with different names:
-      "${userInfo.name}", "this.info.name"`);
+      "${userInfo.name}", "this.name"`);
     return true;
   }
 
