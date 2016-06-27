@@ -99,6 +99,7 @@ module.exports = class Round {
       }
     });
 
+    this.extractedTrackList = trackList;
     Object.freeze(this); // No changes any more my friend.
     return trackList;
   }

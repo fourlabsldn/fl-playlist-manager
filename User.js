@@ -59,6 +59,7 @@ module.exports = class User {
   extractTrack(trackNo) {
     assert(typeof trackNo === 'number', `Invalid track number: ${trackNo}`);
     const track = this.tracks[trackNo];
+    track.setUsed();
     const beforeIndex = this.tracks.slice(0, trackNo);
     const afterIndex = this.tracks.slice(trackNo + 1, this.tracks.length);
     this.tracks = beforeIndex.concat(afterIndex);

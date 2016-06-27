@@ -1,6 +1,24 @@
 /* eslint-env node */
 const assert = require('assert');
 const User = require('./User');
+const trackProperties = [
+  'id',
+  'name',
+  'album',
+  'artists',
+  'uri',
+  'duration_ms',
+  'available_markets',
+  'disc_number',
+  'explicit',
+  'external_ids',
+  'external_urls',
+  'href',
+  'popularity',
+  'preview_url',
+  'track_number',
+  'type',
+];
 
 module.exports = class Track {
   constructor(trackInfo) {
@@ -9,9 +27,13 @@ module.exports = class Track {
     assert(typeof trackInfo.id !== 'undefined', 'Invalid trackInfo object. No "id" property set.'); // eslint-disable-line max-len
 
     // Make sure we are creating an entirely new object.
-    this.info = JSON.parse(JSON.stringify(trackInfo));
-    this.info.user = undefined;
+    const info = JSON.parse(JSON.stringify(trackInfo));
+    for (const propName of trackProperties) {
+      this[propName] = info[propName];
+    }
+
     this.user = undefined;
+    this.used = false;
     Object.preventExtensions(this);
   }
 
@@ -28,7 +50,7 @@ module.exports = class Track {
     const trackUserId = trackInfo.user ? track.user.id : undefined;
     const thisUserId = this.user ? this.user.id : undefined;
 
-    return trackInfo.id === this.info.id && thisUserId === trackUserId;
+    return trackInfo.id === this.id && thisUserId === trackUserId;
   }
 
   /**
@@ -39,9 +61,8 @@ module.exports = class Track {
   setUser(user) {
     assert(user instanceof User, 'Invalid user being set for track. Not instance of User.');
     assert(this.user === undefined,
-      `User already set for track "${this.info.name}".
+      `User already set for track "${this.name}".
       Current user "${this.user}". Trying to set "${user}".`);
-    this.info.user = user.getInfo();
     this.user = user;
   }
 
@@ -60,7 +81,7 @@ module.exports = class Track {
    * @return {String}
    */
   getId() {
-    return this.info.id;
+    return this.id;
   }
 
   /**
@@ -69,9 +90,33 @@ module.exports = class Track {
    * @return {Object}
    */
   getInfo() {
-    return this.info;
+    const ownKeys = Object.keys(this);
+    const info = {};
+    for (const key of ownKeys) {
+      info[key] = this[key];
+    }
+    info.user = this.user ? this.user.getInfo() : undefined;
+    return info;
   }
 
+  /**
+   * @public
+   * @method setUsed
+   */
+  setUsed() {
+    assert(this.user !== undefined,
+      `Cannot set a track as used if no used is assigned to it. Track: ${this.name}`);
+    this.used = true;
+  }
+
+  /**
+   * @public
+   * @method isUsed
+   * @return {Boolean}
+   */
+  isUsed() {
+    return this.used;
+  }
   /**
    * @public
    * @method toJSON
