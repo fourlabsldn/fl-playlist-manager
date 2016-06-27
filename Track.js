@@ -56,6 +56,15 @@ module.exports = class Track {
 
   /**
    * @public
+   * @method getId
+   * @return {String}
+   */
+  getId() {
+    return this.info.id;
+  }
+
+  /**
+   * @public
    * @method getInfo
    * @return {Object}
    */
