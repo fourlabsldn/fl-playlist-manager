@@ -41,16 +41,17 @@ module.exports = class Track {
    * @public
    * @method isSame
    * @param  {Track} track
+   * @param {Boolean} trackUser - User to use in comparison
    * @return {Boolean}
    */
-  isSame(track) {
+  isSame(track, trackUser) {
     if (!(track instanceof Track)) { return false; }
 
-    const trackInfo = track.getInfo();
-    const trackUserId = trackInfo.user ? track.user.id : undefined;
+    const user = trackUser || track.user;
+    const trackUserId = user ? user.id : undefined;
     const thisUserId = this.user ? this.user.id : undefined;
 
-    return trackInfo.id === this.id && thisUserId === trackUserId;
+    return track.id === this.id && thisUserId === trackUserId;
   }
 
   /**

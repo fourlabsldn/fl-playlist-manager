@@ -100,6 +100,7 @@ module.exports = class RoundHandler {
   }
 
   /**
+   * Repeated tracks are removed
    * @public
    * @method setUserTracks
    * @throws if trackOrder doesn't have the exact same tracks as user.tracks.
@@ -108,7 +109,12 @@ module.exports = class RoundHandler {
    */
   setUserTracks(userInfo, trackObjects) {
     const user = this.getUser(userInfo);
-    const tracks = trackObjects.map(t => new Track(t));
-    user.setTracks(tracks);
+    const allTracks = trackObjects.map(t => new Track(t));
+
+    // Remove all tracks that have already been used.
+    const notUsedTracks = allTracks.filter(t => {
+      return !this.usedTracks.find(used => used.isSame(t, user));
+    });
+    user.setTracks(notUsedTracks);
   }
 };

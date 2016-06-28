@@ -39,6 +39,7 @@ logTracks(handler.generateNextTrackListRound());
 
 try {
   handler.setUserTracks(userData[3], [
+    trackData[7],
     trackData[8],
     trackData[6],
     trackData[5],
@@ -48,11 +49,11 @@ try {
 }
 //
 logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());
