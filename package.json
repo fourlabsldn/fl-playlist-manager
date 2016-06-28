@@ -1,0 +1,22 @@
+{
+  "name": "playlist-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fourlabsldn/fl-playlist-manager.git"
+  },
+  "author": "Lazamar @ Fourlabs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fourlabsldn/fl-playlist-manager/issues"
+  },
+  "homepage": "https://github.com/fourlabsldn/fl-playlist-manager#readme"
+}
