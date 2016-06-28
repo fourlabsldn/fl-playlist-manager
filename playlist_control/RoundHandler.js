@@ -1,13 +1,12 @@
 /* eslint-env node */
 const assert = require('assert');
 const Track = require('./Track');
-const Round = require('./Round');
 const User = require('./User');
 
 module.exports = class RoundHandler {
   constructor() {
-    this.rounds = [];
     this.users = [];
+    this.usedTracks = [];
     Object.preventExtensions(this);
   }
 
@@ -26,22 +25,6 @@ module.exports = class RoundHandler {
     const user = this.getUser(userInfo);
     const trackAdded = user.addTrack(track);
     if (!trackAdded) { return false; }
-
-    let userAddedToRound = false;
-    for (const round of this.rounds) {
-      userAddedToRound = round.addUser(user);
-      if (userAddedToRound) { break; }
-    }
-    // If there was no success in adding the user to any of the existing rounds,
-    // it means it is already present in all rounds. So let's create a new
-    // round for him.
-    if (!userAddedToRound) {
-      const newRound = new Round();
-      userAddedToRound = newRound.addUser(user);
-      this.rounds = this.rounds.concat([newRound]);
-    }
-
-    assert(userAddedToRound, 'Bug found. User was misteriously not added to any round.');
     return true;
   }
 
@@ -68,37 +51,52 @@ module.exports = class RoundHandler {
 
 
   /**
-   * Get list of tracks without changing any round's active state
+   * Get list of tracks without changing anything in any object
    * @method getTrackList
    * @return {Array<Track>}
    */
   getTrackList() {
-    let fullTrackList = [];
-    let roundOffset = -1;
-    for (const round of this.rounds) {
-      // We will be sending roundOffset -1 while we have inactive rounds.
-      // As soon as we hit active rounds we will start counding the offset.
-      roundOffset += round.isActive() ? 1 : 0;
-      const roundTrackList = round.getTrackList(roundOffset);
-      fullTrackList = fullTrackList.concat(roundTrackList);
+    let fullTrackList = [].concat(this.usedTracks);
+    let roundTracks = [];
+    let roundOffset = 0;
 
-      assert(round.isActive() && roundOffset >= 0 || roundOffset === -1,
-        `Round inactive after active rounds. Round offset ${roundOffset}`);
-    }
+    do {
+      const tracksAndTimes = [];
+      for (const user of this.users) {
+        const track = user.getTrack(roundOffset);
+        const settingTime = user.getTrackSettingTime(roundOffset);
+        if (track) { tracksAndTimes.push({ track, settingTime }); }
+      }
+
+      // Order by setting time.
+      tracksAndTimes.sort((t1, t2) => t1.settingTime.diff(t2.settingTime));
+
+      // Get just the tracks
+      roundTracks = tracksAndTimes.map(t => t.track);
+      roundOffset += 1;
+
+      fullTrackList = fullTrackList.concat(roundTracks);
+    } while (roundTracks.length > 0);
+
     return fullTrackList;
   }
 
   /**
-   * Returns one round of tracks and sets the first active round
+   * Returns one round of tracks and sets all tracks in this round to
+   * used, so they can't be moved anymore.
    * as inactive.
    * @method generateNextTrackListRound
    * @return {Array<Track>}
    */
   generateNextTrackListRound() {
-    const firstActiveRound = this.rounds.find(r => r.isActive());
-    // extractTrackList will set the round as inactive and freeze its tracks.
-    // It will also make those tracks non-modifiable.
-    return firstActiveRound ? firstActiveRound.extractTrackList() : [];
+    const roundOffset = 0;
+    const roundTrackList = [];
+    for (const user of this.users) {
+      const track = user.extractTrack(roundOffset);
+      if (track) { roundTrackList.push(track); }
+    }
+    this.usedTracks = this.usedTracks.concat(roundTrackList);
+    return roundTrackList;
   }
 
   /**
@@ -106,10 +104,11 @@ module.exports = class RoundHandler {
    * @method setUserTrackOrder
    * @throws if trackOrder doesn't have the exact same tracks as user.tracks.
    * @param  {Object} userInfo
-   * @param  {Array<Object>} trackOrder
+   * @param  {Array<Object>} trackObjects
    */
-  setUserTrackOrder(userInfo, trackOrder) {
+  setUserTrackOrder(userInfo, trackObjects) {
     const user = this.getUser(userInfo);
-    user.setTrackOrder(trackOrder);
+    const tracks = trackObjects.map(t => new Track(t));
+    user.setTrackOrder(tracks);
   }
 };

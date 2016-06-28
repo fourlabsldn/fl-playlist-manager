@@ -33,6 +33,8 @@ function logTracks(trackList) {
   console.log(list);
 }
 
+logTracks(handler.getTrackList());
+
 logTracks(handler.generateNextTrackListRound());
 
 try {
@@ -44,13 +46,13 @@ try {
 } catch (e) {
   console.log(e.message);
 }
-
+//
 logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
-handler.generateNextTrackListRound();
-logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());
+// handler.generateNextTrackListRound();
+// logTracks(handler.getTrackList());

@@ -1,5 +1,6 @@
 /* eslint-env node */
 const assert = require('assert');
+const moment = require('moment');
 
 module.exports = class User {
   constructor({ id, name }) {
@@ -8,6 +9,11 @@ module.exports = class User {
     this.id = id;
     this.name = name;
     this.tracks = [];
+
+    // A chronologically ordered array containing the time that
+    // each track position was filled.
+    // Index 0 has the time the first tracks was addded, index 1 the second...
+    this.trackSettingTimes = [];
     Object.preventExtensions(this);
   }
 
@@ -17,14 +23,16 @@ module.exports = class User {
    * @public
    * @method addTrack
    * @param  {Track} track
+   * @param {Date | moment} trackSettingTime
    * @return {Boolean} success/failure
    */
-  addTrack(track) {
+  addTrack(track, trackSettingTime = moment()) {
     if (this.hasTrack(track)) {
       return false;
     }
     track.setUser(this);
     this.tracks = this.tracks.concat([track]);
+    this.trackSettingTimes = this.trackSettingTimes.concat([trackSettingTime]);
     return true;
   }
 
@@ -50,14 +58,30 @@ module.exports = class User {
   }
 
   /**
+   * @public
+   * @method getTrackSettingTime
+   * @param  {Int} trackNo
+   * @return {Moment}
+   */
+  getTrackSettingTime(trackNo) {
+    return this.trackSettingTimes[trackNo];
+  }
+
+  /**
    * Replaces all user tracks for new ones.
    * @public
    * @method setTracks
-   * @param  {[type]} tracks [description]
+   * @param  {Array<Track>} tracks
    */
   setTracks(tracks) {
+    const settingTimes = this.trackSettingTimes;
+    this.trackSettingTimes = [];
     this.tracks = [];
-    tracks.forEach((t) => this.addTrack(t));
+    tracks.forEach((t, idx) => this.addTrack(t, settingTimes[idx]));
+
+    // Trim trackSettingTimes to this.tracks size, in case the new tracks
+    // have less elements than the last tracks
+    this.trackSettingTimes = this.trackSettingTimes.slice(0, this.tracks.length);
   }
 
   /**
@@ -70,33 +94,26 @@ module.exports = class User {
   extractTrack(trackNo) {
     assert(typeof trackNo === 'number', `Invalid track number: ${trackNo}`);
     const track = this.tracks[trackNo];
+    if (!track) { return null; }
+
     track.setUsed();
-    const beforeIndex = this.tracks.slice(0, trackNo);
-    const afterIndex = this.tracks.slice(trackNo + 1, this.tracks.length);
-    this.tracks = beforeIndex.concat(afterIndex);
+    this.tracks = withoutIndex(this.tracks, trackNo);
+    this.trackSettingTimes = withoutIndex(this.trackSettingTimes, trackNo);
+    assert(this.tracks.length === this.trackSettingTimes.length,
+      `User ${this.name} tracks and trackSettingTimes out of sync.`);
     return track;
   }
 
-  // /**
-  //  * @public
-  //  * @method setTrackOrder
-  //  * @throws if trackOrder doesn't have the exact same tracks as user.tracks.
-  //  * @param  {Array<Object>} tracks - Array of track objects. Must contain the
-  //  * same track ids that the user's current tracks array has.
-  //  */
-  // setTrackOrder(tracks) {
-  //   assert(Array.isArray(tracks), `Invalid tracks parameter. ${tracks} is not an array.`);
-  //   assert(tracks.length === this.tracks.length, 'Incompatible tracklist size in reordering.');
-  //   const sorted = Array.from(this.tracks);
-  //   sorted.sort((t1, t2) => {
-  //     const t1NewIndex = tracks.findIndex(t => t.id === t1.getId());
-  //     const t2NewIndex = tracks.findIndex(t => t.id === t2.getId());
-  //     assert(t1NewIndex !== -1, `User track not in reordering array: ${t1.getInfo().name}`);
-  //     assert(t2NewIndex !== -1, `User track not in reordering array: ${t2.getInfo().name}`);
-  //     return t1NewIndex - t2NewIndex;
-  //   });
-  //   this.tracks = sorted;
-  // }
+  /**
+   * @public
+   * @method setTrackOrder
+   * @throws if trackOrder doesn't have the exact same tracks as user.tracks.
+   * @param  {Array<Object>} tracks - Array of track objects. Must contain the
+   * same track ids that the user's current tracks array has.
+   */
+  setTrackOrder(tracks) {
+    this.setTracks(tracks);
+  }
 
   /**
    * @public
@@ -136,3 +153,9 @@ module.exports = class User {
     return this.getInfo();
   }
 };
+
+function withoutIndex(arr, idx) {
+  const beforeIndex = arr.slice(0, idx);
+  const afterIndex = arr.slice(idx + 1, arr.length);
+  return beforeIndex.concat(afterIndex);
+}
