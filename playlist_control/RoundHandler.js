@@ -101,14 +101,14 @@ module.exports = class RoundHandler {
 
   /**
    * @public
-   * @method setUserTrackOrder
+   * @method setUserTracks
    * @throws if trackOrder doesn't have the exact same tracks as user.tracks.
    * @param  {Object} userInfo
    * @param  {Array<Object>} trackObjects
    */
-  setUserTrackOrder(userInfo, trackObjects) {
+  setUserTracks(userInfo, trackObjects) {
     const user = this.getUser(userInfo);
     const tracks = trackObjects.map(t => new Track(t));
-    user.setTrackOrder(tracks);
+    user.setTracks(tracks);
   }
 };

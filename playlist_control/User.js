@@ -106,17 +106,6 @@ module.exports = class User {
 
   /**
    * @public
-   * @method setTrackOrder
-   * @throws if trackOrder doesn't have the exact same tracks as user.tracks.
-   * @param  {Array<Object>} tracks - Array of track objects. Must contain the
-   * same track ids that the user's current tracks array has.
-   */
-  setTrackOrder(tracks) {
-    this.setTracks(tracks);
-  }
-
-  /**
-   * @public
    * @method getInfo
    * @return {Object}
    */

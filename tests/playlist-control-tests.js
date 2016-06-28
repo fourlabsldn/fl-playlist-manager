@@ -38,7 +38,7 @@ logTracks(handler.getTrackList());
 logTracks(handler.generateNextTrackListRound());
 
 try {
-  handler.setUserTrackOrder(userData[3], [
+  handler.setUserTracks(userData[3], [
     trackData[8],
     trackData[6],
     trackData[5],
