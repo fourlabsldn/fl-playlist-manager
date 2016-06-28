@@ -122,6 +122,6 @@ module.exports = class User {
    * @return {String}
    */
   toJSON() {
-    return JSON.stringify(this.getInfo());
+    return this.getInfo();
   }
 };

@@ -123,6 +123,6 @@ module.exports = class Track {
    * @return {String}
    */
   toJSON() {
-    return JSON.stringify(this.getInfo());
+    return this.getInfo();
   }
 };
