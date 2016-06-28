@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/fourlabsldn/fl-playlist-manager/issues"
   },
-  "homepage": "https://github.com/fourlabsldn/fl-playlist-manager#readme"
+  "homepage": "https://github.com/fourlabsldn/fl-playlist-manager#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2"
+  }
 }
