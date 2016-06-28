@@ -113,4 +113,17 @@ module.exports = class Round {
   isActive() {
     return this.extractedTrackList === null;
   }
+
+  /**
+   * Calculates the total time of the round's songs.
+   * @public
+   * @method calculateTime
+   * @param {Int} roundOffset
+   * @return {Int} Time in milliseconds
+   */
+  calculateTime(roundOffset) {
+    const trackList = this.getTrackList(roundOffset);
+    const totalTime = trackList.reduce((sum, t) => sum + t, 0);
+    return totalTime;
+  }
 };
