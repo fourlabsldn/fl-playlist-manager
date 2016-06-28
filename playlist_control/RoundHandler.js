@@ -115,6 +115,7 @@ module.exports = class RoundHandler {
     const notUsedTracks = allTracks.filter(t => {
       return !this.usedTracks.find(used => used.isSame(t, user));
     });
-    user.setTracks(notUsedTracks);
+
+    return user.setTracks(notUsedTracks);
   }
 };

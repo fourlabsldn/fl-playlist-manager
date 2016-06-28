@@ -1,6 +1,6 @@
 /* eslint-env node */
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 
 module.exports = (spotify, roundHandler) => {
   const app = express();
@@ -15,15 +15,12 @@ module.exports = (spotify, roundHandler) => {
   app.post('/setUserTracks', (req, res) => {
     const tracks = req.body.tracks;
     const user = req.body.user;
-    console.log('Tracks: ', tracks);
-    console.log('User:', user);
+    roundHandler.setUserTracks(user, tracks);
     res.json({ success: true });
   });
 
   app.get('/', (req, res) => {
-    console.dir(req.query);
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    res.send('The root you have reached. content we have not.');
   });
 
   app.listen(3000, () => {
