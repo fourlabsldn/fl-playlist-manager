@@ -48,11 +48,11 @@ try {
 }
 //
 logTracks(handler.getTrackList());
-// handler.generateNextTrackListRound();
-// logTracks(handler.getTrackList());
-// handler.generateNextTrackListRound();
-// logTracks(handler.getTrackList());
-// handler.generateNextTrackListRound();
-// logTracks(handler.getTrackList());
-// handler.generateNextTrackListRound();
-// logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
+logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
+logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
+logTracks(handler.getTrackList());
+handler.generateNextTrackListRound();
+logTracks(handler.getTrackList());
