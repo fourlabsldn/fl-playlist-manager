@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-const RoundHandler = require('../RoundHandler');
+const RoundHandler = require('../playlist_control/RoundHandler');
 const trackData = require('./trackData');
 const userData = require('./userData');
 const handler = new RoundHandler();
