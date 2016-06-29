@@ -1,10 +1,18 @@
 /* eslint-env node */
+
+// HTTPS data
+const fs = require('fs');
+const path = require('path');
+const hskey = fs.readFileSync(path.join(__dirname, 'playlist-manager-key.pem'));
+const hscert = fs.readFileSync(path.join(__dirname, 'playlist-manager-cert.pem'));
+const httpsOptions = { key: hskey, cert: hscert };
+
 const assert = require('assert');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const http = require('http').Server(app); // eslint-disable-line new-cap
-const io = require('socket.io')(http);
+const https = require('https').createServer(httpsOptions, app); // eslint-disable-line new-cap
+const io = require('socket.io')(https);
 const cors = require('cors');
 const playlistUpdateMsg = 'playlist_update';
 
@@ -52,7 +60,7 @@ module.exports = (playlistController) => {
     }
   });
 
-  http.listen(3000, () => console.log('Spotify server listening on port 3000!'));
+  https.listen(3000, () => console.log('Spotify server listening on port 3000!'));
 };
 
 
