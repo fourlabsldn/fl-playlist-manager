@@ -5,14 +5,30 @@ const app = express();
 
 const http = require('http').Server(app); // eslint-disable-line new-cap
 const io = require('socket.io')(http);
-
 const cors = require('cors');
-const assert = require('assert');
+
+const setUserTracks = require('./setUserTracks');
+const playlistUpdateMsg = 'playlist_update';
 
 module.exports = (spotify, roundHandler) => {
+  io.on('connection', (socket) => {
+    console.log('a user connected');
+
+    socket.on('user_playlist_update', (msg) => {
+      const outcome = setUserTracks(msg, roundHandler);
+      if (outcome.success) {
+        // Tell everyone of the playlist update
+        io.sockets.emit(playlistUpdateMsg, roundHandler.getTrackList());
+      }
+    });
+  });
+
+  // Initialisation
   app.use(cors());
   app.use(bodyParser.json()); // to support JSON-encoded bodies
   app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
+
+  app.get('/', (req, res) => res.send('The root you have reached. content we have not.'));
 
   app.get('/getTrackList', (req, res) => {
     const trackList = roundHandler.getTrackList();
@@ -20,37 +36,14 @@ module.exports = (spotify, roundHandler) => {
   });
 
   app.post('/setUserTracks', (req, res) => {
-    const tracks = req.body.tracks;
-    const user = req.body.user;
-
-    try {
-      assert(tracks, 'Missing key. Tracks array not sent in request.');
-      assert(Array.isArray(tracks), 'Tracks key is not an array.');
-      assert(user, 'Missing key. User object not sent.');
-      assert(typeof user.id === 'string', 'Invalid user id type.');
-      assert(typeof user.name === 'string', 'Invalid user id type.');
-      roundHandler.setUserTracks(user, tracks);
-      res.json({ success: true });
-
+    const outcome = setUserTracks(req.body, roundHandler);
+    res.json(outcome);
+    if (outcome.success) {
       // Tell everyone of the playlist update
-      io.sockets.emit('playlist_update', roundHandler.getTrackList());
-    } catch (e) {
-      console.log(e.message);
-      res.json({ error: e.message });
-      return;
+      io.sockets.emit(playlistUpdateMsg, roundHandler.getTrackList());
     }
   });
 
-  app.get('/', (req, res) => {
-    res.send('The root you have reached. content we have not.');
-  });
 
-
-  io.on('connection', (socket) => {
-    console.log('a user connected');
-  });
-
-  http.listen(3000, () => {
-    console.log('Example app listening on port 3000!');
-  });
+  http.listen(3000, () => console.log('Spotify server listening on port 3000!'));
 };
