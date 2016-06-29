@@ -1,11 +1,15 @@
 /* eslint-env node */
 const express = require('express');
 const bodyParser = require('body-parser');
+const app = express();
+
+const http = require('http').Server(app); // eslint-disable-line new-cap
+const io = require('socket.io')(http);
+
 const cors = require('cors');
 const assert = require('assert');
 
 module.exports = (spotify, roundHandler) => {
-  const app = express();
   app.use(cors());
   app.use(bodyParser.json()); // to support JSON-encoded bodies
   app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
@@ -27,6 +31,9 @@ module.exports = (spotify, roundHandler) => {
       assert(typeof user.name === 'string', 'Invalid user id type.');
       roundHandler.setUserTracks(user, tracks);
       res.json({ success: true });
+
+      // Tell everyone of the playlist update
+      io.sockets.emit('playlist_update', roundHandler.getTrackList());
     } catch (e) {
       console.log(e.message);
       res.json({ error: e.message });
@@ -38,7 +45,12 @@ module.exports = (spotify, roundHandler) => {
     res.send('The root you have reached. content we have not.');
   });
 
-  app.listen(3000, () => {
+
+  io.on('connection', (socket) => {
+    console.log('a user connected');
+  });
+
+  http.listen(3000, () => {
     console.log('Example app listening on port 3000!');
   });
 };
