@@ -21,6 +21,8 @@
   "homepage": "https://github.com/fourlabsldn/fl-playlist-manager#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "cors": "^2.7.1"
+    "cors": "^2.7.1",
+    "moment": "^2.13.0",
+    "spotify-web-api-node": "^2.3.0"
   }
 }
