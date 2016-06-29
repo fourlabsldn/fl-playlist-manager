@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/fourlabsldn/fl-playlist-manager#readme",
   "dependencies": {
-    "body-parser": "^1.15.2"
+    "body-parser": "^1.15.2",
+    "cors": "^2.7.1"
   }
 }
