@@ -7,6 +7,7 @@ module.exports = class RoundHandler {
   constructor() {
     this.users = [];
     this.usedTracks = [];
+    this.lastPlaylistData = { duration: 0, generationTime: new Date() };
     Object.preventExtensions(this);
   }
 
@@ -96,7 +97,22 @@ module.exports = class RoundHandler {
       if (track) { roundTrackList.push(track); }
     }
     this.usedTracks = this.usedTracks.concat(roundTrackList);
+
+    this.lastPlaylistData.duration = this.calculateRoundDuration(roundTrackList);
+    this.lastPlaylistData.generationTime = new Date();
     return roundTrackList;
+  }
+
+  /**
+   * @public
+   * @method getLastPlaylistData
+   * @return {Object}
+   */
+  getLastPlaylistData() {
+    return {
+      duration: this.lastPlaylistData.duration,
+      generationTime: this.lastPlaylistData.generationTime,
+    };
   }
 
   /**

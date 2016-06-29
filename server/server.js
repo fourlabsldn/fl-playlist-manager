@@ -1,24 +1,21 @@
 /* eslint-env node */
+const assert = require('assert');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-
 const http = require('http').Server(app); // eslint-disable-line new-cap
 const io = require('socket.io')(http);
 const cors = require('cors');
-
-const setUserTracks = require('./setUserTracks');
 const playlistUpdateMsg = 'playlist_update';
 
-module.exports = (spotify, roundHandler) => {
+module.exports = (playlistController) => {
   io.on('connection', (socket) => {
     console.log('a user connected');
 
     socket.on('user_playlist_update', (msg) => {
-      const outcome = setUserTracks(msg, roundHandler);
+      const outcome = setUserTracks(msg, playlistController);
       if (outcome.success) {
-        // Tell everyone of the playlist update
-        io.sockets.emit(playlistUpdateMsg, roundHandler.getTrackList());
+        playlistUpdate();
       }
     });
   });
@@ -31,19 +28,50 @@ module.exports = (spotify, roundHandler) => {
   app.get('/', (req, res) => res.send('The root you have reached. content we have not.'));
 
   app.get('/getTrackList', (req, res) => {
-    const trackList = roundHandler.getTrackList();
+    const trackList = playlistController.getTrackList();
     res.json(trackList);
   });
 
   app.post('/setUserTracks', (req, res) => {
-    const outcome = setUserTracks(req.body, roundHandler);
+    const outcome = setUserTracks(req.body, playlistController);
     res.json(outcome);
     if (outcome.success) {
-      // Tell everyone of the playlist update
-      io.sockets.emit(playlistUpdateMsg, roundHandler.getTrackList());
+      playlistUpdate();
     }
   });
 
 
   http.listen(3000, () => console.log('Spotify server listening on port 3000!'));
+
+  function playlistUpdate() {
+    // Tell everyone of the playlist update
+    io.sockets.emit(playlistUpdateMsg, playlistController.getTrackList());
+  }
 };
+
+
+/**
+ * Updates a user's tracks and, if successfull, emits a message to everyone
+ * with an updated track list
+ * @method setUserTracks
+ * @param  {Object} obj
+ */
+function setUserTracks(obj, playlistController) {
+  const tracks = obj.tracks;
+  const user = obj.user;
+  const outcome = { sucess: false, error: false };
+  try {
+    assert(tracks, 'Missing key. Tracks array not sent in request.');
+    assert(Array.isArray(tracks), 'Tracks key is not an array.');
+    assert(user, 'Missing key. User object not sent.');
+    assert(typeof user.id === 'string', 'Invalid user id type.');
+    assert(typeof user.name === 'string', 'Invalid user id type.');
+    playlistController.setUserTracks(user, tracks);
+    outcome.success = true;
+  } catch (e) {
+    console.log(e.message);
+    outcome.error = e.message;
+  }
+
+  return outcome;
+}

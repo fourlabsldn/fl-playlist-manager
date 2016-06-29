@@ -1,13 +1,10 @@
 /* eslint-env node */
 
-const RoundHandler = require('./playlist_control/RoundHandler');
-const roundHandler = new RoundHandler();
-
-const Spotify = require('./spotify_control/Spotify');
-const credentials = require('./spotify_control/credentials');
-const spotify = new Spotify('Office', credentials);
+const PlaylistController = require('./server/PlaylistController');
+const playlistName = 'Office';
+const playlistController = new PlaylistController(playlistName);
 
 const server = require('./server/server');
 
-spotify.init()
-.then(() => server(spotify, roundHandler));
+playlistController.init()
+  .then(() => server(playlistController));
