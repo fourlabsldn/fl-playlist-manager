@@ -9,6 +9,15 @@ const cors = require('cors');
 const playlistUpdateMsg = 'playlist_update';
 
 module.exports = (playlistController) => {
+  // Initialisation
+  app.use(cors());
+  app.use(bodyParser.json()); // to support JSON-encoded bodies
+  app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
+
+  // ---------------------------------------------------------------------------
+  //  Socket
+  // ---------------------------------------------------------------------------
+
   io.on('connection', (socket) => {
     console.log('a user connected');
 
@@ -20,10 +29,13 @@ module.exports = (playlistController) => {
     });
   });
 
-  // Initialisation
-  app.use(cors());
-  app.use(bodyParser.json()); // to support JSON-encoded bodies
-  app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
+  function playlistUpdate() {
+    // Tell everyone of the playlist update
+    io.sockets.emit(playlistUpdateMsg, playlistController.getTrackList());
+  }
+  // ---------------------------------------------------------------------------
+  //  Express server
+  // ---------------------------------------------------------------------------
 
   app.get('/', (req, res) => res.send('The root you have reached. content we have not.'));
 
@@ -40,13 +52,7 @@ module.exports = (playlistController) => {
     }
   });
 
-
   http.listen(3000, () => console.log('Spotify server listening on port 3000!'));
-
-  function playlistUpdate() {
-    // Tell everyone of the playlist update
-    io.sockets.emit(playlistUpdateMsg, playlistController.getTrackList());
-  }
 };
 
 
