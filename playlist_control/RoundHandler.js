@@ -118,4 +118,15 @@ module.exports = class RoundHandler {
 
     return user.setTracks(notUsedTracks);
   }
+
+
+  /**
+   * @public
+   * @method calculateRoundDuration
+   * @param  {Array<track>} tracks
+   * @return {Int} - in milliseconds
+   */
+  calculateRoundDuration(tracks) {
+    return tracks.reduce((sum, t) => sum + t.duration_ms, 0);
+  }
 };
