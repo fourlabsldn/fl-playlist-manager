@@ -58,6 +58,7 @@ module.exports = class PlaylistController {
     try {
       this.spotify.addTracks(trackUris);
     } catch (e) {
+      this.spotify.refreshAccessToken();
       console.error('Error: ', e);
     }
 
@@ -70,8 +71,9 @@ module.exports = class PlaylistController {
     this.playlistFinishTime = newPlaylistFinishTime;
 
     const timeToPLaylistEnd = this.playlistFinishTime.diff(moment(), 'milliseconds'); // in ms
-    // submit next track round 10 seconds before the tracklist ends.
-    const timeToNextSubmission = timeToPLaylistEnd - 10000; // in ms
+    // submit next track around 10 seconds before the tracklist ends.
+    // guarantee a minimum time of 10 seconds between submissions. To avoid a DOS attack on our router.
+    const timeToNextSubmission = Math.min(timeToPLaylistEnd - 10000, 10000); // in ms
 
     // Schedule next update
     setTimeout(() => this.submitToSpotify(), timeToNextSubmission);
